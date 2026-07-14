@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+data/
+*.class
+*.log
+.env
+.idea/
+.DS_Store
+
+

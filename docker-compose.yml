@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: employee-data-service-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-employees}
+      POSTGRES_USER: ${DB_USER:-employees_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-employees_app_password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - employee_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-employees_app} -d ${DB_NAME:-employees}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  employee_db_data:

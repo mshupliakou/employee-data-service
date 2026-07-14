@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: employee-data-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:postgres}
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# NEVER use these defaults in production. See README "Security notes" section.
+app:
+  security:
+    ssn:
+      encryption-key: ${SSN_ENCRYPTION_KEY:XCVxP45qOKej794cB32VL2/28c+GPUBQ90w/Q9JTDac=}
+      hmac-secret: ${SSN_HMAC_SECRET:5YX2thFgM2b5o9yE3O6sQU2mPimZxR09IIktnjVzxIo=}
+
+logging:
+  level:
+    org.hibernate.SQL: ${SQL_LOG_LEVEL:WARN}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:employees}
+    username: ${DB_USER:employees_app}
+    password: ${DB_PASSWORD:employees_app_password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+---
+# No-docker fallback: an on-disk H2 database so the service can run with zero
+# external dependencies. Use `--spring.profiles.active=h2-local` to enable.
+spring:
+  config:
+    activate:
+      on-profile: h2-local
+  datasource:
+    url: jdbc:h2:file:./data/employees-db;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
