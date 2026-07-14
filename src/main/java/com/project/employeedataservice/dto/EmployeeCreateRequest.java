@@ -1,7 +1,7 @@
 package com.project.employeedataservice.dto;
 
-import com.example.employeeservice.entity.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.employeedataservice.entity.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;

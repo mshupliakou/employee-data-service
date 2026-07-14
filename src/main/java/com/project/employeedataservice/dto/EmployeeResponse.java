@@ -1,7 +1,7 @@
 package com.project.employeedataservice.dto;
 
-import com.example.employeeservice.entity.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.employeedataservice.entity.Gender;
 
 import java.time.Instant;
 import java.time.LocalDate;

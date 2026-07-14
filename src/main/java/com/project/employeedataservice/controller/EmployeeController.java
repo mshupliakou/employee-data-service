@@ -1,8 +1,9 @@
 package com.project.employeedataservice.controller;
 
-import com.example.employeeservice.dto.EmployeeCreateRequest;
-import com.example.employeeservice.dto.EmployeeResponse;
-import com.example.employeeservice.service.EmployeeService;
+import com.project.employeedataservice.dto.EmployeeCreateRequest;
+import com.project.employeedataservice.service.EmployeeService;
+import com.project.employeedataservice.dto.EmployeeResponse;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
