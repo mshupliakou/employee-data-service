@@ -1,6 +1,5 @@
 package com.project.employeedataservice.integration;
 
-import com.example.employeeservice.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,7 +28,7 @@ class EmployeeApiIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private com.project.employeedataservice.integration.EmployeeRepository employeeRepository;
 
     @Test
     void createThenGetEmployee_roundTripsCorrectlyWithoutExposingRawSsn() throws Exception {

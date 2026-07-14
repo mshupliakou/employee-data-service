@@ -1,9 +1,9 @@
 package com.project.employeedataservice.controller;
 
-import com.example.employeeservice.dto.EmployeeResponse;
-import com.example.employeeservice.entity.Gender;
-import com.example.employeeservice.exception.EmployeeNotFoundException;
-import com.example.employeeservice.service.EmployeeService;
+import com.project.employeedataservice.dto.EmployeeResponse;
+import com.project.employeedataservice.entity.Gender;
+import com.project.employeedataservice.exception.EmployeeNotFoundException;
+import com.project.employeedataservice.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
