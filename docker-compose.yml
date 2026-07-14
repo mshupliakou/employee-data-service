@@ -4,11 +4,11 @@ services:
     container_name: employee-data-service-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-employees}
-      POSTGRES_USER: ${DB_USER:-employees_app}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-employees_app_password}
+      POSTGRES_DB: employees
+      POSTGRES_USER: employees_app
+      POSTGRES_PASSWORD: employees_app_password
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "5433:5432" # Жестко задаем внешний порт 5433, игнорируя .env
     volumes:
       - employee_db_data:/var/lib/postgresql/data
     healthcheck:
