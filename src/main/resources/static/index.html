@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Data Service</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #fafafa; color: #1a1a1a; line-height: 1.6; padding: 2rem 1rem;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    h1 {
+      font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em;
+      margin-bottom: 2rem; color: #111;
+    }
+    h2 {
+      font-size: 0.875rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #666; margin-bottom: 1rem;
+    }
+    .card {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 8px;
+      padding: 1.5rem; margin-bottom: 2rem;
+    }
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .form-grid .full-width { grid-column: 1 / -1; }
+    label {
+      display: block; font-size: 0.8125rem; font-weight: 500;
+      color: #333; margin-bottom: 0.375rem;
+    }
+    input, select {
+      width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem;
+      border: 1px solid #d4d4d4; border-radius: 6px; background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+      font-family: inherit; color: inherit;
+    }
+    input:focus, select:focus {
+      outline: none; border-color: #888; box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
+    }
+    .error-input { border-color: #d32f2f !important; }
+    .field-error { font-size: 0.75rem; color: #d32f2f; margin-top: 0.25rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      padding: 0.5rem 1.25rem; font-size: 0.875rem; font-weight: 500;
+      border: none; border-radius: 6px; cursor: pointer;
+      transition: background .15s; font-family: inherit;
+    }
+    .btn-primary { background: #1a1a1a; color: #fff; }
+    .btn-primary:hover { background: #333; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .toast {
+      padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.8125rem;
+      margin-bottom: 1rem; display: none;
+    }
+    .toast-success { background: #e8f5e9; color: #2e7d32; display: block; }
+    .toast-error { background: #ffebee; color: #c62828; display: block; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.8125rem;
+    }
+    th {
+      text-align: left; font-weight: 600; color: #666;
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e5e5;
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    td {
+      padding: 0.75rem; border-bottom: 1px solid #f0f0f0; vertical-align: middle;
+    }
+    tr:hover td { background: #fafafa; }
+    .text-muted { color: #888; }
+    .empty-state {
+      text-align: center; padding: 3rem 1rem; color: #888;
+    }
+    .empty-state p { font-size: 0.875rem; }
+    .badge {
+      display: inline-block; padding: 0.125rem 0.5rem; border-radius: 999px;
+      font-size: 0.6875rem; font-weight: 500; background: #f0f0f0; color: #555;
+    }
+    .gender-icon { opacity: 0.6; margin-right: 0.25rem; }
+    .spinner {
+      display: inline-block; width: 14px; height: 14px; border: 2px solid #ccc;
+      border-top-color: #666; border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .mt-2 { margin-top: 2rem; }
+    .pagination {
+      display: flex; justify-content: center; align-items: center; gap: 0.5rem;
+      margin-top: 1rem; font-size: 0.8125rem;
+    }
+    .pagination button {
+      background: none; border: 1px solid #d4d4d4; border-radius: 4px;
+      padding: 0.25rem 0.5rem; cursor: pointer; font-size: 0.8125rem; color: #333;
+    }
+    .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .pagination span { color: #666; }
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      body { padding: 1rem; }
+      .card { padding: 1rem; }
+      table { font-size: 0.75rem; }
+      th, td { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Employees</h1>
+  <div id="toast"></div>
+
+  <div class="card">
+    <h2>New Employee</h2>
+    <form id="createForm">
+      <div class="form-grid">
+        <div>
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" name="firstName" maxlength="100" required />
+          <div class="field-error" id="firstName-error"></div>
+        </div>
+        <div>
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" name="lastName" maxlength="100" required />
+          <div class="field-error" id="lastName-error"></div>
+        </div>
+        <div>
+          <label for="dateOfBirth">Date of birth</label>
+          <input type="date" id="dateOfBirth" name="dateOfBirth" required />
+          <div class="field-error" id="dateOfBirth-error"></div>
+        </div>
+        <div>
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select...</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="NON_BINARY">Non-binary</option>
+            <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+            <option value="OTHER">Other</option>
+          </select>
+          <div class="field-error" id="gender-error"></div>
+        </div>
+        <div class="full-width">
+          <label for="ssn">Social Security Number</label>
+          <input type="text" id="ssn" name="ssn" placeholder="XXX-XX-XXXX" required />
+          <div class="field-error" id="ssn-error"></div>
+        </div>
+      </div>
+      <div class="flex-between" style="margin-top:1rem">
+        <div class="field-error" id="form-error"></div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Create</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="flex-between">
+    <h2>All Employees</h2>
+    <button class="btn" id="refreshBtn" style="font-size:0.8125rem;border:1px solid #d4d4d4;background:none">Refresh</button>
+  </div>
+  <div class="card" id="employeeList">
+    <div class="empty-state" id="emptyState">
+      <p>No employees yet.</p>
+    </div>
+    <div id="tableWrapper" style="display:none">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>Gender</th>
+            <th>SSN</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '/employees';
+
+const $ = id => document.getElementById(id);
+const toast = $('toast');
+const form = $('createForm');
+const submitBtn = $('submitBtn');
+const tableBody = $('tableBody');
+const tableWrapper = $('tableWrapper');
+const emptyState = $('emptyState');
+const pagination = $('pagination');
+
+let currentPage = 0;
+
+function showToast(message, type) {
+  toast.textContent = message;
+  toast.className = 'toast toast-' + type;
+  setTimeout(() => { toast.style.display = ''; }, 4000);
+}
+
+function clearErrors() {
+  document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+  document.querySelectorAll('.error-input').forEach(el => el.classList.remove('error-input'));
+}
+
+function setFieldError(id, message) {
+  const el = $(id);
+  if (el) el.classList.add('error-input');
+  const err = $(id + '-error');
+  if (err) err.textContent = message;
+}
+
+function formatInstant(instant) {
+  if (!instant) return '';
+  const d = new Date(instant);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function genderLabel(g) {
+  const map = { MALE:'Male', FEMALE:'Female', NON_BINARY:'Non-binary', PREFER_NOT_TO_SAY:'Prefer not to say', OTHER:'Other' };
+  return map[g] || g;
+}
+
+function genderIcon(g) {
+  const icons = { MALE:'♂', FEMALE:'♀', NON_BINARY:'⚧' };
+  return icons[g] || '';
+}
+
+function formatSsn(s) {
+  if (!s) return '';
+  if (s.startsWith('***')) return s;
+  return s.length === 11 ? s : '***-**-' + s.slice(-4);
+}
+
+async function fetchEmployees(page = 0) {
+  try {
+    const res = await fetch(`${API}?page=${page}&size=20&sort=createdAt,desc`);
+    if (!res.ok) throw new Error('Failed to load employees');
+    return await res.json();
+  } catch (e) {
+    showToast(e.message, 'error');
+    return null;
+  }
+}
+
+function renderEmployees(data) {
+  tableBody.innerHTML = '';
+  pagination.innerHTML = '';
+
+  if (!data || data.empty) {
+    tableWrapper.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  tableWrapper.style.display = '';
+  emptyState.style.display = 'none';
+  currentPage = data.number;
+
+  data.content.forEach(emp => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = [
+      `<td><strong>${esc(emp.firstName)} ${esc(emp.lastName)}</strong></td>`,
+      `<td class="text-muted">${formatDate(emp.dateOfBirth)}</td>`,
+      `<td><span class="gender-icon">${genderIcon(emp.gender)}</span>${genderLabel(emp.gender)}</td>`,
+      `<td><span class="badge">${esc(emp.ssnMasked)}</span></td>`,
+      `<td class="text-muted">${formatInstant(emp.createdAt)}</td>`
+    ].join('');
+    tableBody.appendChild(tr);
+  });
+
+  if (data.totalPages > 1) {
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = '←';
+    prevBtn.disabled = data.first;
+    prevBtn.addEventListener('click', () => loadPage(data.number - 1));
+
+    const pageInfo = document.createElement('span');
+    pageInfo.textContent = `${data.number + 1} / ${data.totalPages}`;
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = '→';
+    nextBtn.disabled = data.last;
+    nextBtn.addEventListener('click', () => loadPage(data.number + 1));
+
+    pagination.append(prevBtn, pageInfo, nextBtn);
+  }
+}
+
+async function loadPage(page) {
+  const data = await fetchEmployees(page);
+  renderEmployees(data);
+}
+
+async function loadFirstPage() {
+  const data = await fetchEmployees(0);
+  if (data) {
+    renderEmployees(data);
+  } else {
+    tableWrapper.style.display = 'none';
+    emptyState.style.display = 'block';
+  }
+}
+
+const esc = str => {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+};
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearErrors();
+
+  const payload = {
+    firstName: $('firstName').value.trim(),
+    lastName: $('lastName').value.trim(),
+    dateOfBirth: $('dateOfBirth').value,
+    gender: $('gender').value,
+    socialSecurityNumber: $('ssn').value.trim()
+  };
+
+  if (!payload.gender) {
+    setFieldError('gender', 'Gender is required');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span> Creating...';
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const body = res.status !== 204 && res.status !== 201 ? null : null;
+    const data = res.status !== 204 ? await res.json().catch(() => null) : null;
+
+    if (res.ok) {
+      showToast('Employee created successfully', 'success');
+      form.reset();
+      await loadFirstPage();
+    } else if (res.status === 409) {
+      showToast(data?.message || 'An employee with this SSN already exists', 'error');
+    } else if (res.status === 400 && data?.fieldErrors) {
+      Object.entries(data.fieldErrors).forEach(([field, msg]) => {
+        const map = {
+          firstName: 'firstName', lastName: 'lastName',
+          dateOfBirth: 'dateOfBirth', gender: 'gender',
+          socialSecurityNumber: 'ssn'
+        };
+        setFieldError(map[field] || field, msg);
+      });
+    } else {
+      showToast(data?.message || 'Something went wrong', 'error');
+    }
+  } catch (err) {
+    showToast('Network error', 'error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Create';
+  }
+});
+
+$('refreshBtn').addEventListener('click', () => loadPage(currentPage));
+
+// Auto-format SSN input
+$('ssn').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g, '');
+  if (v.length > 3) v = v.slice(0, 3) + '-' + v.slice(3);
+  if (v.length > 6) v = v.slice(0, 6) + '-' + v.slice(6);
+  if (v.length > 11) v = v.slice(0, 11);
+  this.value = v;
+});
+
+loadFirstPage();
+</script>
+</body>
+</html>
