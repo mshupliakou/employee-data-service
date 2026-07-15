@@ -203,16 +203,14 @@ don't need it.
 
 ## 4. AI tool usage
 
-I used **Claude** throughout this exercise for scaffolding and iteration speed — laying
-out the package structure, generating the first draft of each class, and drafting this
-README.
+I used **Claude**, **Gemini**, and **Opencode** throughout this exercise 
+for code generation and iteration speed. 
+They were extremely helpful for laying out the package structure 
+and brainstorming technology choices, especially when reasoning 
+about the encryption architecture for the SSN.
 
-One concrete thing I changed: the first draft used a **single SHA-256 hash of the SSN**
-(no HMAC key) for the uniqueness check, with the reasoning "hashing is one-way, so it's
-safe." I rejected that — a plain, unkeyed hash of a value with only ~10^9 possible inputs
-(SSNs) is not meaningfully protected against an attacker who obtains the hash column,
-since they can just precompute every possible SSN's hash offline in seconds and reverse
-the entire table. I changed the uniqueness check to an **HMAC-SHA256 keyed with a
-server-side secret**, which closes that specific brute-force path, and kept the separate
-AES-256-GCM encrypted column for the (rare, audited) case where the org legitimately
-needs the original value back.
+One concrete thing I changed from the AI's suggestions: 
+the initial generated draft used a plain String for the gender field. 
+I rejected that and refactored it to use a strongly typed Enum. 
+This ensures type safety at the Java level, makes the API more predictable, 
+and prevents invalid values or typos from ever reaching the database.
