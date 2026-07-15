@@ -201,11 +201,6 @@ don't need it.
   being audited rather than a hard delete.
 - **`@Version` optimistic locking** on `Employee` to guard concurrent updates once an
   update endpoint exists.
-- **Testcontainers** instead of H2-in-Postgres-mode for the integration test, so the test
-  suite exercises the exact database engine used in production rather than a
-  close-but-not-identical compatibility mode.
-- **Structured request logging / correlation IDs**, and making sure no logging
-  configuration could ever accidentally log a raw request body containing an SSN.
 
 ---
 
