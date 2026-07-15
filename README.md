@@ -158,12 +158,20 @@ worse than the alternative, so this project stores:
 No endpoint decrypts or returns the full SSN — the requirement is met by construction,
 not by a check I have to remember to keep enforcing.
 
-**Key management, honestly stated:** the encryption key and HMAC secret are read from
-`SSN_ENCRYPTION_KEY` / `SSN_HMAC_SECRET` env vars, with checked-in defaults purely so the
-service boots out of the box for grading. **Those defaults are not secrets** — anyone
-with this repo has them. In a real deployment they'd come from a proper secrets manager
-(AWS Secrets Manager / Vault / etc.), rotated independently of the codebase, and the
-checked-in fallback values would not exist at all.
+**Key management, honestly stated:** the encryption key, HMAC secret, and database
+credentials are hardcoded directly in `application.yml`. This is a deliberate tradeoff
+for a take-home assignment — it means the service runs with zero setup
+(`./mvnw spring-boot:run` and nothing else to configure), which matters more here than
+production hygiene. **These values are not secrets** — anyone with this repo has them.
+
+In a real deployment none of this would be checked into version control: the encryption
+key and HMAC secret would come from a proper secrets manager (AWS Secrets Manager /
+Vault / etc.) and be injected as environment variables at deploy time, rotated
+independently of the codebase; database credentials would follow the same pattern. The
+code already reads these values through Spring's `${VAR:default}` property placeholders
+in a couple of spots, so wiring in real secrets later is a config change, not a code
+change — but I chose to hardcode the actual values for this submission rather than half
+the docs.
 
 **Bean Validation (`jakarta.validation`) at the DTO boundary**, with a
 `@RestControllerAdvice` translating failures into a single consistent JSON error shape
