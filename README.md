@@ -11,17 +11,27 @@ Stack: **Java 21**, **Spring Boot 4 / Spring Framework 7**, **Spring Data JPA**,
 
 ## 1. Running it locally
 
-### Option A — Postgres via Docker Compose (recommended)
+**Prerequisites:** Java 21, Docker (if using PostgreSQL).
+
+### Option A — single command (recommended)
 
 ```bash
-# 1. start the database
-docker compose up -d
+# Windows:
+start.bat
 
-# 2. run the app (uses the "postgres" profile, which is the default)
+# macOS / Linux:
+./start.sh
+```
+
+Or directly (all OS):
+
+```bash
 ./mvnw spring-boot:run
 ```
 
-The API is then available at `http://localhost:8080`.
+Spring Boot's Docker Compose integration automatically starts PostgreSQL,
+waits for it to be healthy, and launches the application. Everything stops
+cleanly on Ctrl+C.
 
 ### Option B — zero dependencies (embedded H2, no Docker)
 
@@ -29,8 +39,11 @@ The API is then available at `http://localhost:8080`.
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2-local
 ```
 
-This writes an on-disk H2 database to `./data/employees-db`. Useful for a quick look
-without Docker, not recommended beyond that.
+No Docker required. Writes an on-disk H2 database to `./data/employees-db`.
+
+---
+
+The API is then available at `http://localhost:8080`.
 
 ### Running the tests
 
