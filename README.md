@@ -13,7 +13,7 @@ Stack: **Java 21**, **Spring Boot 4 / Spring Framework 7**, **Spring Data JPA**,
 
 **Prerequisites:** Java 21, Docker (if using PostgreSQL).
 
-### Option A — single command (recommended)
+### Single command 
 
 ```bash
 # Windows:
@@ -32,12 +32,6 @@ Or directly (all OS):
 Spring Boot's Docker Compose integration automatically starts PostgreSQL,
 waits for it to be healthy, and launches the application. Everything stops
 cleanly on Ctrl+C.
-
-### Option B — zero dependencies (embedded H2, no Docker)
-
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=h2-local
-```
 
 No Docker required. Writes an on-disk H2 database to `./data/employees-db`.
 
