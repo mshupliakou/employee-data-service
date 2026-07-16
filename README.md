@@ -11,7 +11,7 @@ Stack: **Java 21**, **Spring Boot 4 / Spring Framework 7**, **Spring Data JPA**,
 
 ## 1. Running it locally
 
-**Prerequisites:** Java 21, Docker.
+**Prerequisites:** Java 21, Docker Desktop (or dockerd) installed **and running**.
 
 ### Single command 
 
@@ -22,6 +22,11 @@ start.bat
 # macOS / Linux:
 ./start.sh
 ```
+
+> **Docker must be running before you start the app** — Spring Boot's Docker Compose
+> integration will start the PostgreSQL container for you automatically, but it can't do
+> that if the Docker daemon itself isn't up. If you see a connection error on startup,
+> check that Docker Desktop is running and try again.
 
 Or directly (all OS):
 
