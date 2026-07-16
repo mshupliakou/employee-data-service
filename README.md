@@ -11,7 +11,7 @@ Stack: **Java 21**, **Spring Boot 4 / Spring Framework 7**, **Spring Data JPA**,
 
 ## 1. Running it locally
 
-**Prerequisites:** Java 21, Docker (if using PostgreSQL).
+**Prerequisites:** Java 21, Docker.
 
 ### Single command 
 
@@ -32,8 +32,6 @@ Or directly (all OS):
 Spring Boot's Docker Compose integration automatically starts PostgreSQL,
 waits for it to be healthy, and launches the application. Everything stops
 cleanly on Ctrl+C.
-
-No Docker required. Writes an on-disk H2 database to `./data/employees-db`.
 
 ---
 
@@ -102,15 +100,13 @@ were wrong.
 
 ## 2. Technology choices, and why
 
-**Spring Boot 4 / Java 21.** Requested by the assignment reviewer; also gives access to
+**Spring Boot 4 / Java 21.** gives access to
 records (used for all DTOs — immutable, concise, and validation annotations work
 directly on record components) and virtual-thread-friendly APIs if this were ever scaled up.
 
 **PostgreSQL.** A relational model fits this data well (a fixed, well-typed schema,
 uniqueness constraints, no need for flexible/nested documents). Postgres is free, widely
-understood, and trivial to run via Docker Compose. An embedded H2 profile is also
-included purely so the grader can run the service with zero setup if Docker isn't
-convenient — it isn't meant as a production alternative.
+understood, and trivial to run via Docker Compose. 
 
 **UUID primary keys instead of auto-increment longs.** For a service holding PII,
 sequential integer IDs make it trivial to enumerate/scrape every record (`GET
